@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padi AI - Groq Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Perbaikan Latar Belakang agar lebih dalam (Deep Dark) */
+        body { 
+            background-color: #050810; 
+            background-image: radial-gradient(circle at top right, #0d1b3e, transparent);
+        }
+        
+        /* Glassmorphism yang lebih kontras */
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.8); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Perbaikan Animasi Loading */
+        @keyframes loading-slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+        .animate-loading {
+            animation: loading-slide 1.5s infinite linear;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 text-slate-200">
+
+<div class="max-w-2xl mx-auto">
+    <div class="text-center mb-10">
+        <div class="inline-block px-4 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 shadow-sm">
+            Kecerdasan Buatan oleh King Mamank
+        </div>
+        <h1 class="text-5xl font-black text-white flex justify-center items-center gap-3 tracking-tighter">
+            <span class="text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">🌾</span> VARIETAS PADI<span class="text-green-500">.AI</span>
+        </h1>
+        <p class="text-slate-500 text-sm mt-2 font-medium">Sistem Informasi Varietas PPL Bola</p>
+    </div>
+
+    <div class="glass-card p-2 rounded-[2rem] shadow-2xl mb-8 flex items-center transition-all focus-within:ring-2 focus-within:ring-green-500/40">
+        <input id="input-varietas" type="text"
+            placeholder="Cari varietas (contoh: Inpari 32)..."
+            class="flex-1 p-4 bg-transparent rounded-2xl text-white outline-none placeholder:text-slate-600 text-lg">
+        
+        <button onclick="cariVarietas()" id="btn-cari"
+            class="bg-green-600 text-white w-14 h-14 rounded-[1.5rem] font-bold hover:bg-green-500 active:scale-90 transition-all flex items-center justify-center shadow-lg shadow-green-900/40">
+            <i class="fas fa-search text-xl"></i>
+        </button>
+    </div>
+
+    <div id="loading" class="hidden text-center py-12">
+        <div class="w-48 h-1.5 bg-slate-800 rounded-full mx-auto overflow-hidden relative">
+            <div class="bg-green-500 h-full w-1/3 absolute animate-loading shadow-[0_0_10px_#22c55e]"></div>
+        </div>
+        <p class="text-green-500 text-[10px] font-mono uppercase tracking-[0.3em] mt-4 font-bold">Processing Data</p>
+    </div>
+
+    <div id="hasil" class="hidden space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <div class="bg-gradient-to-br from-green-600 to-emerald-800 p-8">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 id="nama" class="text-4xl font-black text-white tracking-tighter uppercase">-</h2>
+                        <p class="text-green-100/80 text-[10px] font-bold uppercase tracking-widest mt-1">Sertifikasi Varietas</p>
+                    </div>
+                    <i class="fas fa-shield-halved text-white/20 text-4xl"></i>
+                </div>
+            </div>
+
+            <div class="p-8 grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-5 rounded-[1.5rem] border border-white/5 hover:border-green-500/30 transition-colors">
+                    <p class="text-[10px] text-green-500 font-bold uppercase mb-2 tracking-widest">⏳ Umur Tanaman</p>
+                    <p id="umur" class="text-white text-lg font-semibold">-</p>
+                </div>
+                <div class="bg-slate-800/50 p-5 rounded-[1.5rem] border border-white/5 hover:border-green-500/30 transition-colors">
+                    <p class="text-[10px] text-green-500 font-bold uppercase mb-2 tracking-widest">💎 Potensi Hasil</p>
+                    <p id="potensi" class="text-white text-lg font-semibold">-</p>
+                </div>
+                <div class="bg-slate-800/50 p-5 rounded-[1.5rem] border border-white/5 hover:border-green-500/30 transition-colors">
+                    <p class="text-[10px] text-green-500 font-bold uppercase mb-2 tracking-widest">🛡️ Tahan Hama</p>
+                    <p id="hama" class="text-white text-lg font-semibold">-</p>
+                </div>
+                <div class="bg-slate-800/50 p-5 rounded-[1.5rem] border border-white/5 hover:border-green-500/30 transition-colors">
+                    <p class="text-[10px] text-green-500 font-bold uppercase mb-2 tracking-widest">🍚 Tekstur Nasi</p>
+                    <p id="nasi" class="text-white text-lg font-semibold">-</p>
+                </div>
+            </div>
+
+            <div class="px-8 pb-8">
+                <div class="bg-green-500/5 p-6 rounded-[2rem] border border-green-500/20 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+                    <p class="text-green-400 font-black text-[10px] mb-3 flex items-center gap-2 tracking-[0.2em]">
+                        <i class="fas fa-lightbulb"></i> REKOMENDASI PPL:
+                    </p>
+                    <p id="saran" class="text-slate-300 text-sm leading-relaxed italic font-medium">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const gasUrl = "https://script.google.com/macros/s/AKfycbyihpzJknrniK0KLvlFvNFI6N08uD_LWhx2jQrZqi3Tylhj2syCq1L6bKIzwc8YftAF/exec";
+
+    async function cariVarietas() {
+        const input = document.getElementById("input-varietas").value.trim();
+        if (!input) return;
+
+        const btn = document.getElementById("btn-cari");
+        const loading = document.getElementById("loading");
+        const hasil = document.getElementById("hasil");
+
+        btn.disabled = true;
+        loading.classList.remove("hidden");
+        hasil.classList.add("hidden");
+
+        const promptText = `Berikan data teknis varietas padi: ${input}. Wajib format JSON: {"nama":"...", "umur":"...", "potensi":"...", "hama":"...", "nasi":"...", "saran":"..."}`;
+
+        try {
+            const response = await fetch(gasUrl, {
+                method: "POST",
+                body: JSON.stringify({ prompt: promptText }),
+            });
+
+            const data = await response.json();
+
+            document.getElementById("nama").innerText = data.nama;
+            document.getElementById("umur").innerText = data.umur;
+            document.getElementById("potensi").innerText = data.potensi;
+            document.getElementById("hama").innerText = data.hama;
+            document.getElementById("nasi").innerText = data.nasi;
+            document.getElementById("saran").innerText = data.saran;
+
+            hasil.classList.remove("hidden");
+        } catch (err) {
+            alert("Terjadi kesalahan. Pastikan skrip Anda sudah dideploy dengan benar.");
+        } finally {
+            btn.disabled = false;
+            loading.classList.add("hidden");
+        }
+    }
+
+    document.getElementById("input-varietas").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") cariVarietas();
+    });
+</script>
+
+</body>
+</html>
