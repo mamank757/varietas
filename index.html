@@ -139,20 +139,20 @@
 
         const promptText = `Anda adalah pakar agronomi padi Indonesia.
 Analisis varietas: ${input}. 
-Gunakan data deskripsi resmi Kementan dan pengalaman penyuluh lapangan.
+Gunakan data deskripsi resmi Kementan, hasil penelitian BRIN, dan data varietas dari BB Padi Sukamandi (sekarang di bawah BRIN/Kementan), serta pengalaman penyuluh lapangan.
 
 WAJIB BALAS HANYA JSON MURNI:
 {
   "nama": "Nama lengkap varietas",
   "umur": "Durasi umur (HSS/HST)",
   "potensi": "Angka ton/ha",
-  "hama": "Ketahanan wereng/penyakit",
+  "hama": "Ketahanan penyakit",
   "nasi": "Tekstur & rasa",
   "adaptasi": "Lahan irigasi/tadah hujan/ketinggian",
   "kelebihan": "2 keunggulan utama",
   "kekurangan": "2 titik kritis/kelemahan",
   "pemupukan": "Saran dasar dosis pupuk",
-  "saran": "1 kalimat strategi budidaya terbaik"
+  "saran": "2 kalimat strategi budidaya terbaik"
 }`;
 
         try {
